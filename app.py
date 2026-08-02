@@ -1,6 +1,8 @@
+import streamlit as st
 import pandas as pd
 from difflib import get_close_matches
 
+# Sample knowledge base
 data = {
     "question": [
         "How to reset password?",
@@ -15,17 +17,20 @@ data = {
 }
 df = pd.DataFrame(data)
 
-def knowledge_bot(query):
+def knowledge_bot(query: str) -> str:
     matches = get_close_matches(query, df["question"], n=1, cutoff=0.3)
     if matches:
         answer = df.loc[df["question"] == matches[0], "answer"].values[0]
-        return f"Answer: {answer}"
+        return answer
     else:
-        return "Sorry, I couldn’t find relevant info."
+        return "Sorry, I couldn't find relevant info."
 
-# Interactive mode
-while True:
-    query = input("Ask me something (or type 'exit'): ")
-    if query.lower() == "exit":
-        break
-    print(knowledge_bot(query))
+# Streamlit UI
+st.title("ðŸ“š Knowledge Retrieval Bot")
+st.write("Ask me a question and I'll fetch the best answer from the knowledge base.")
+
+query = st.text_input("Enter your question:")
+
+if query:
+    response = knowledge_bot(query)
+    st.success(response)
